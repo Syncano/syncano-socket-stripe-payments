@@ -1,0 +1,854 @@
+name: stripe-payments
+description: Stripe offers payment solutions for businesses.
+version: 0.0.1
+
+config:
+  STRIPE_SECRET_KEY:
+    description: Stripe Secret Key
+    long_description: |
+      To find the key, log into your Stripe account, navigate to API.
+    required: true
+
+endpoints:
+  balance/listAllBalance:
+    description: Returns a list of transactions that have contributed to the Stripe account balance.
+    parameters:
+      params:
+        type: object
+        description: Optional parameters for listing all balances. Check Stripe API reference documentation.
+        example: |
+          "params": {
+            { "currency": "usd",
+            "limit": 3 }
+          }
+          
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Balance.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: amount",
+              "statusCode": 400
+            }
+
+  balance/retrieveBalance:
+    description: Retrieves current account balance, based on authentication used to make the request.
+    
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Balance report.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "message": "Make sure to use `GET` request method for retrieving balance."
+            }
+
+  balance/retrieveBalanceTransaction:
+    description: Retrieves the balance transaction with the given ID.
+    parameters:
+      transID:
+        type: string
+        description: ID of the desired balance transaction.
+        long_description: |
+          The ID of the desired balance transaction (as found on any API object
+          that affects the balance, e.g. a charge or transfer).
+        example: "txn_1BYXxzJbpxha41ttgmoeelpy"
+    
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Balance transaction report.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+               "type": "StripeInvalidRequestError",
+              "message": "No such balance transaction: txn_1BYXxzJbpxha41ttgm",
+              "statusCode": 404
+            }
+
+  charge/charges:
+    description: Create, Retrieve and Update actions for charges.
+    long_description: |
+      This comprises of three actions for `charges` resource.
+      Make sure to use `POST`, `GET` and `PUT` request method for creating,
+      retrieving and updating charges respectively.
+    parameters:
+      chargeParameter:
+        type: object
+        description: Parameters for executing creating and updating of a charge.
+        long_description: |
+            This is needed for creating and updating a charge.
+            When creating a charge. Object must contain amount, currency and source.
+            When updating a charge, the parameters are optional
+        example: |
+          {
+            "chargeParameter":
+              {"currency": "usd",
+                "source": "tok_mastercard",
+                "amount": 500,
+                "capture":"false"
+              }
+          }
+      chargeID:
+        type: string
+        description: The identifier of the charge to be retrieved or updated.
+        example: "ch_1BYXxnJbpxha41ttAGtgztsa"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Charge Updated",
+            "statusCode": 200,
+            "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Invalid hash",
+              "statusCode": 400
+            }
+
+  charge/captureCharge:
+    description: Capture the payment of an existing, uncaptured, charge.
+    parameters:
+      chargeID:
+        type: string
+        description: ID of a charge.
+        example: "ch_1BYXxnJbpxha41ttAGtgztsa"
+      captureChargeParameter:
+        type: object
+        description: Optional parameters for capturing a charge.
+        example: |
+          { "amount": 500,
+            "receipt_email": "chinazor.allen@syncano.com"
+          }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Charge Captured",
+              "statusCode": 200
+              "data": {},
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Charge ch_1BYA0RJbpxha41ttZKjcsuTt has already been captured.",
+              "statusCode": 400
+            }
+
+  charge/listAllCharges:
+    description: Returns a list of charges previously created.
+    parameters:
+      listChargesParameter:
+        type: object
+        description: Optional parameters for listing charges. Check Stripe API reference documentation.
+        example: |
+          { limit: 3 }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Charges",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: id",
+              "statusCode": 400
+            }
+  
+  customers/customer:
+    description: Create, Retrieve, Update and Delete  actions for customer.
+    long_description: |
+      This comprises of four actions for `customers` resource.
+      Make sure to use `POST`, `GET`, `PUT` and `DELETE` request method for creating,
+      retrieving, updating and deleting customers respectively.
+    parameters:
+      customerParameter:
+        type: object
+        description: Optional Parameters for creating and updating customer.
+        example: |
+          {
+            "customerParameter":
+              { "account_balance": 1000,
+                "description": "testing things",
+                "email": "example@example.com"
+              }
+          }
+      customerID:
+        type: string
+        description: A compulsory identifier of the charge to be retrieved, updated or deleted.
+        example: "cus_BvilkNcCyAsOod"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            "message": "Customer created successfully.",
+            "statusCode": 200,
+            "data": {}
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: limit",
+              "statusCode": 400
+            }
+
+  customers/listAllCustomers:
+    description: Returns a list of your customers.
+    parameters:
+      listCustomersParameter:
+        type: object
+        description: Optional parameters for listing customers. Check Stripe API reference documentation.
+        example: |
+          { limit: 1 }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Customers.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: id",
+              "statusCode": 400
+            }
+
+  disputes/closeDispute:
+    description: Closes dispute for a charge.
+    parameters:
+      disputeID:
+        type: string
+        description: ID of dispute to close.
+        example: "dp_1BXrJvJbpxha41ttpCkU6s2D"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Disputes.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such dispute: dp_1BZD3gJbpxha41ttQMvPAnPz",
+              "statusCode": 404
+            }
+  
+  disputes/dispute:
+    description: Retrieve and Update actions for dispute.
+    long_description: |
+      This comprises of two actions for `disputes` resource.
+      Make sure to use `GET` and `PUT` request method for 
+      retrieving and updating charges respectively.
+    parameters:
+      disputeParameter:
+        type: object
+        description: Should contain optional parameters for updating of dispute.
+        example: |
+          {
+            "disputeParameter":
+              "evidence": {
+                  "customer_name": "Anthony Johnson",
+                  "product_description": "Comfortable cotton t-shirt",
+                  "shipping_documentation": "file_1BXrK4Jbpxha41ttgNYLcslo"
+                }
+          }
+      disputeID:
+        type: string
+        description: The identifier of the dispute to retrieve or update.
+        example: "dp_1BXrJvJbpxha41ttpCkU6s2D"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Dispute retrieved successfully",
+            "statusCode": 200,
+            "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such dispute: dp_1BZD3gJbpxha41ttQMvPAnPz",
+              "statusCode": 404
+            }
+
+  disputes/listAllDisputes:
+    description: Returns a list of all disputes.
+    parameters:
+      disputesParams:
+        type: object
+        description: Optional parameters for listing disputes. Check Stripe API reference documentation.
+        example: |
+          { limit: 3 }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Disputes.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: id",
+              "statusCode": 400
+            }
+
+  events/listAllEvents:
+    description: Returns a list of all events.
+    parameters:
+      eventsParams:
+        type: object
+        description: Optional parameters for listing events. Check Stripe API reference documentation.
+        example: |
+          { limit: 3 }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Events.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: id",
+              "statusCode": 400
+            }
+
+  events/retrieveEvent:
+    description: Closes dispute for a charge.
+    parameters:
+      eventID:
+        type: string
+        description: The identifier of the event to be retrieved.
+        example: "evt_1BYXxzJbpxha41tt0cH1164E"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Event retrieved successfully.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such event: evt_1BYXxzJbpxha41tt0cH",
+              "statusCode": 404
+            }
+
+  tokens/token:
+    description: Creates a single use token that wraps the details of a credit card.
+    parameters:
+      tokenParams:
+        type: object
+        description: Parameters for creating token 
+        long_description: | 
+          Parameters provided must be either a card, customer, pii data, or bank account to create a token.
+          Reference Stripe API reference documentation.
+        example: |
+          {"tokenParams": 
+            {"card": 
+              {
+                "number": 4242424242424242,
+                "exp_month": 12,
+                "exp_year": 2018,
+                "cvc": 123
+              } 
+            }
+          }
+
+      tokenID:
+        type: string
+        description: The ID of the desired token.
+        example: "tok_1BZKxVJbpxha41ttee6PDtyQ"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Token created successfully.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "You must supply either a card, customer, pii data, or bank account to create a token.",
+              "statusCode": 400
+            }
+
+  bankAccounts/bankAccount:
+    description: Create, Retrieve, Update and Delete  actions for bank account.
+    long_description: |
+      This comprises of four actions for `bank accounts` resource.
+      Make sure to use `POST`, `GET`, `PUT` & `DELETE` request method for creating,
+      retrieving, updating & deleting bank accounts respectively.
+    parameters:
+      bankAcctParams:
+        type: object
+        description: Addition arguments for creating and updating bank account.
+        example: |
+          {
+            "bankAcctParams": 
+            { 
+              "source": "tok_1BZKxVJbpxha41ttee6PDtyQ"
+            }
+          }
+      customerID:
+        type: string
+        description: A compulsory customer identifier of the bank account to be retrieved, updated or deleted.
+        example: "cus_BwTBe5lcoH6QBA"
+      bankAcctID:
+        type: string
+        description: A compulsory identifier of the bank account to be retrieved, updated or deleted.
+        example: "card_1BZKxVJbpxha41ttCbNJuOWy"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            "message": "Bank Account Retrieved",
+            "statusCode": 200,
+            "data": {}
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Missing required param: source.",
+              "statusCode": 400
+            }
+
+  bankAccounts/listAllBankAccts:
+    description: Returns  a list of the bank accounts belonging to a Customer.
+    parameters:
+      bankAcctParams:
+        type: object
+        description: Optional parameters for listing all bank accounts. Check Stripe API reference documentation.
+        example: |
+          {
+            "bankAcctParams": {
+              "limit": 3
+            }
+          }
+      customerID:
+        type: string
+        description: The ID of the customer whose bank accounts will be retrieved.
+        example: "cus_BwTBe5lcoH6QBA"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Bank Accounts.",
+              "statusCode": 200,
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "Received unknown parameter: limi",
+              "statusCode": 400
+            }
+
+  bankAccounts/verifyBankAccts:
+    description: Verifies the customer's bank account. This only works with real bank account information.
+    parameters:
+      bankAcctParams:
+        type: object
+        description: Optional parameters for verifying bank accounts. Check Stripe API reference documentation.
+        example: |
+          {
+            "bankAcctParams": {
+              "amounts": [32, 45]
+            }
+          }
+      bankAcctID:
+        type: string
+        description: The ID of the source to be verified.
+        example: "ba_1BZD3aJbpxha41ttq4aQGcL5"
+      customerID:
+        type: string
+        description: The ID of the customer whose bank accounts will be verified.
+        example: "cus_BwTBe5lcoH6QBA"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Bank Account Retrieved.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "The payment source card_1BZLlzJbpxha41ttuQ1XGBpE does not require validation.",
+              "statusCode": 400
+            }
+
+  cards/card:
+    description: Create, Retrieve, Update and Delete  actions for cards.
+    long_description: |
+      This comprises of four actions for `customers` resource.
+      Make sure to use `POST`, `GET`, `PUT` and `DELETE` request method for creating,
+      retrieving, updating and deleting customers respectively.
+    parameters:
+      cardParams:
+        type: object
+        description: Parameters for creating and updating customer.
+        long_description: |
+            When creating a card. Object must contain source.
+            When updating a card, the parameters are optional
+        example: |
+          {
+            "cardParams": {
+              "source": "tok_1BZmhWJbpxha41ttGBMAJQIM"
+            }
+          }
+      cardID:
+        type: string
+        description: A compulsory card identifier of to be retrieved, updated or deleted.
+        example: "card_1BZmhWJbpxha41tt0owIItGH"
+      customerID:
+        type: string
+        description: A compulsory customer identifier of the card to be retrieved, updated or deleted.
+        example: "cus_BvilkNcCyAsOod"
+
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            "message": "Card created.",
+            "statusCode": 200,
+            "data": {}
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "You cannot use a Stripe token more than once: tok_1BZLlzJbpxha41ttSWMzMbjE.",
+              "statusCode": 400
+            }
+
+  cards/listAllCards:
+    description: Creates a single use token that wraps the details of a credit card.
+    parameters:
+      cardParams:
+        type: object
+        description: Optional parameters for creating card token. Check Stripe API reference documentation.
+        example: |
+          {
+            "cardParams": {
+              "source": "tok_1BZmhWJbpxha41ttGBMAJQIM"
+            }
+          }
+      customerID:
+        type: string
+        description: The ID of the customer whose cards will be listed.
+        example: "cus_BvilkNcCyAsOod"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "List of Cards.",
+              "statusCode": 200,
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such customer: cus_BwTBe5lcoH6BA",
+              "statusCode": 400
+            }
+
+  sources/attachSource:
+    description: Attaches a Source object to a Customer.
+    parameters:
+      customerID:
+        type: string
+        description: Compulsory parameter for customer's identification. Check Stripe API reference documentation.
+        example: "cus_BwTBe5lcoH6QBA"
+      sourceParameter:
+        type: object
+        description: The identifier of the source to be attached..
+        example: "src_1BaB1JJbpxha41ttLYR2i93n"
+
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Source Attached.",
+              "statusCode": 200,
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "The source you provided cannot be attached to the customer. It must be chargeable or pending.",
+              "statusCode": 400
+            }
+
+  sources/detachSource:
+    description: Detaches a Source object from a Customer.
+    parameters:
+      customerID:
+        type: string
+        description: Compulsory parameter for customer's identification. Check Stripe API reference documentation.
+        example: "cus_BwTBe5lcoH6QBA"
+      sourceID:
+        type: string
+        description: The ID of the desired source to detach.
+        example: "src_1BaB1JJbpxha41ttLYR2i93n"
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "message": "Source Detached.",
+              "statusCode": 200
+              "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such source: [object Object]",
+              "statusCode": 404
+            }
+  
+  sources/source:
+    description: Create, Retrieve and Update actions for sources.
+    long_description: |
+      This comprises of three actions for `charges` resource.
+      Make sure to use `POST`, `GET` and `PUT` request method for creating,
+      retrieving and updating sources respectively.
+    parameters:
+      sourceParameter:
+        type: object
+        description: Parameters for executing creating and updating of source.
+        long_description: |
+            This is needed for creating and updating a charge.
+            When creating a source. Object must contain type.
+            When updating a charge, the parameters are optional
+        example: |
+          {
+            "sourceParameter":
+              {
+                "type": "bitcoin",
+                "amount": 1000,
+                "currency": "usd",
+                "owner": 
+                  {
+                    "email": "jenny.rosen@example.com"
+                  }
+              }
+          }
+      sourceID:
+        type: string
+        description: The identifier of the source to be retrieved or updated.
+        example: "src_1BZnTOJbpxha41ttWPB6EFQS"
+      clientSecret:
+        type: object
+        description: The client secret of the source.
+        example: |
+          {
+            "client_secret": "src_client_secret_BxivTwjZdpjwpqXaCWG9F0rf"
+          }
+     
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+            "message": "Source Retrieved",
+            "statusCode": 200,
+            "data": {}
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "type": "StripeInvalidRequestError",
+              "message": "No such source: src_1BZnTOJbpxha41ttWPB6EFS",
+              "statusCode": 400
+            }
