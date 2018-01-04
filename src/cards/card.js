@@ -1,53 +1,51 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
   const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { customerID, cardParams, cardID } = ctx.args;
+  const actions = 'creating, retrieving, updating and deleting cards respectively';
+  const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'];
 
   try {
-    if (requestMethod === 'POST') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const createCard = await stripe.customers.createSource(customerID, cardParams);
       return response.json({
         message: 'Card created.',
         statusCode: 200,
-        data: createCard,
+        data: createCard
       });
-    } else if (requestMethod === 'GET') {
+    } else if (requestMethod === expectedMethodTypes[1]) {
       const retrieveCard = await stripe.customers.retrieveCard(customerID, cardID);
       return response.json({
         message: 'Card Retrieved',
         statusCode: 200,
-        data: retrieveCard,
+        data: retrieveCard
       });
-    } else if (requestMethod === 'PUT') {
+    } else if (requestMethod === expectedMethodTypes[2]) {
       const updateCard = await stripe.customers.updateCard(customerID, cardID, cardParams);
       return response.json({
         message: 'Card Updated',
         statusCode: 200,
-        data: updateCard,
+        data: updateCard
       });
-    } else if (requestMethod === 'DELETE') {
+    } else if (requestMethod === expectedMethodTypes[3]) {
       const deleteCard = await stripe.customers.deleteCard(customerID, cardID);
       return response.json({
         message: 'Card Deleted',
         statusCode: 200,
-        data: deleteCard,
+        data: deleteCard
       });
     }
-    throw new Error(
-      'Make sure to use `POST`, `GET`, `PUT` and `DELETE` request method for creating, ' +
-        'retrieving, updating and deleting cards respectively.',
-      400,
-    );
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

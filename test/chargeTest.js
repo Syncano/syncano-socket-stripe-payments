@@ -7,7 +7,6 @@ const config = {
 let meta = generateMeta('charge/charges');
 let args = {};
 let chargeID, customerID;
-// const source = '';
 
 describe('CREATE, RETRIEVE, UPDATE, CAPTURE CHARGE AND LIST ALL CHARGE', () => {
   describe('creates charge', () => {
@@ -17,13 +16,15 @@ describe('CREATE, RETRIEVE, UPDATE, CAPTURE CHARGE AND LIST ALL CHARGE', () => {
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST`, `GET` and `PUT` ' +
-        'request method for creating, retrieving and updating charges respectively.');
+        const actions = 'creating, retrieving and updating charges respectively';
+        const expectedMethodTypes = ['POST', 'GET', 'PUT'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });
 
-    it('creates Charge', (done) => {
+    it('creates charge successfully', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
       args = {
         chargeParameter: {
@@ -92,10 +93,10 @@ describe('CREATE, RETRIEVE, UPDATE, CAPTURE CHARGE AND LIST ALL CHARGE', () => {
   describe('list all charge', () => {
     it('lists all cards related to customer  ', (done) => {
       meta = generateMeta('charge/listAllCharges');
-      meta.request.REQUEST_METHOD = 'POST';
+      meta.request.REQUEST_METHOD = 'GET';
       args = {
-        listChargesParameter: {
-          limit: 3
+        source: {
+          object: 'card'
         }
       };
       run('charge/listAllCharges', {

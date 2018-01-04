@@ -6,14 +6,16 @@ const config = {
 };
 let meta = generateMeta('bankAccounts/bankAccount');
 let args = {};
-let customerID, source, bankAcctID = '';
+let customerID,
+  source,
+  bankAcctID = '';
 
 describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () => {
   before((done) => {
     meta = generateMeta('customers/customer');
     run('customers/customer', {
       meta,
-      config,
+      config
     }).then((response) => {
       customerID = response.data.data.id;
       done();
@@ -27,9 +29,10 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST`, `GET`, `PUT` & `DELETE` '
-        + 'request method for creating, retrieving, updating &' +
-        ' deleting bank account respectively.');
+        const actions = 'creating, retrieving, updating & deleting bank account respectively';
+        const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });
@@ -103,7 +106,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
         source = response.data.data.id;
         args = {
           customerID,
-          bankAcctParams: {source}
+          bankAcctParams: { source }
         };
         run('bankAccounts/bankAccount', {
           args,
@@ -168,9 +171,10 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
   describe('list all bank accounts', () => {
     it('lists all account  ', (done) => {
       meta = generateMeta('bankAccounts/listAllBankAccts');
-      meta.request.REQUEST_METHOD = 'POST';
+      meta.request.REQUEST_METHOD = 'GET';
       args = {
-        customerID
+        customerID,
+        limit: 3
       };
       run('bankAccounts/listAllBankAccts', {
         args,
@@ -187,38 +191,39 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
     });
   });
 
-  describe('throws error message, as we are verifying cards ' +
-  "and can't use banks in test mode", () => {
-    it('throws error message when verifying card ', (done) => {
-      meta = generateMeta('bankAccounts/verifyBankAccts');
-      meta.request.REQUEST_METHOD = 'POST';
-      args = {
-        customerID,
-        bankAcctID,
-        bankAcctParams: {
-          amounts: [32, 45]
-        }
-      };
-      run('bankAccounts/verifyBankAccts', {
-        args,
-        meta,
-        config
-      }).then((response) => {
-        expect(response.data.type).to.equal('StripeInvalidRequestError');
-        expect(response.data.message).to.equal(`The payment source ${bankAcctID} ` +
-        'does not require validation.');
-        expect(response.data.statusCode).to.equal(400);
-        done();
+  describe(
+    'throws error message, as we are verifying cards ' + "and can't use banks in test mode",
+    () => {
+      it('throws error message when verifying card ', (done) => {
+        meta = generateMeta('bankAccounts/verifyBankAccts');
+        meta.request.REQUEST_METHOD = 'POST';
+        args = {
+          customerID,
+          bankAcctID,
+          bankAcctParams: {
+            amounts: [32, 45]
+          }
+        };
+        run('bankAccounts/verifyBankAccts', {
+          args,
+          meta,
+          config
+        }).then((response) => {
+          expect(response.data.type).to.equal('StripeInvalidRequestError');
+          expect(response.data.message).to.equal(`The payment source ${bankAcctID} ` + 'does not require validation.');
+          expect(response.data.statusCode).to.equal(400);
+          done();
+        });
       });
-    });
-  });
+    }
+  );
 
   describe('deletes bank Account', () => {
     it('deletes existing bank Account ', (done) => {
       meta.request.REQUEST_METHOD = 'DELETE';
       args = {
         customerID,
-        bankAcctID,
+        bankAcctID
       };
       run('bankAccounts/bankAccount', {
         args,

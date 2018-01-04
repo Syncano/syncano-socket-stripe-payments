@@ -1,39 +1,37 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
   const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { disputeID, disputeParameter } = ctx.args;
+  const actions = 'retrieving and updating disputes';
+  const expectedMethodTypes = ['GET', 'PUT'];
 
   try {
-    if (requestMethod === 'GET') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const retrieveDispute = await stripe.disputes.retrieve(disputeID);
       return response.json({
         message: 'Dispute retrieved successfully',
         statusCode: 200,
-        data: retrieveDispute,
+        data: retrieveDispute
       });
-    } else if (requestMethod === 'PUT') {
+    } else if (requestMethod === expectedMethodTypes[1]) {
       const updateDispute = await stripe.disputes.update(disputesID, disputeParameter);
       return response.json({
         message: 'Dispute updated successfully',
         statusCode: 200,
-        data: updateDispute,
+        data: updateDispute
       });
     }
-    throw new Error(
-      'Make sure to use `GET` and `PUT` request method for ' +
-        'retrieving and updating disputes respectively.',
-      400,
-    );
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

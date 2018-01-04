@@ -1,28 +1,29 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
+  const requestMethod = ctx.meta.request.REQUEST_METHOD;
+  const actions = 'listing all customers';
+  const expectedMethodTypes = ['GET'];
 
   try {
-    if (ctx.meta.request.REQUEST_METHOD === 'POST') {
-      const listStripeCustomer = await stripe.customers.list(ctx.args.listCustomersParameter || {});
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
+      const listStripeCustomer = await stripe.customers.list(ctx.args || {});
       return response.json({
         message: 'List of Customers.',
         statusCode: 200,
-        data: listStripeCustomer,
+        data: listStripeCustomer
       });
     }
-    throw new Error('Make sure to use `POST` request method for listing all customers.', 400);
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
-    throw err;
   }
 };

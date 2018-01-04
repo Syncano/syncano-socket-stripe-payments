@@ -27,9 +27,10 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CARDS AND LIST ALL CARDS', () => {
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST`, `GET`, `PUT` and `DELETE` '
-        + 'request method for creating, retrieving, updating and' +
-        ' deleting cards respectively.');
+        const actions = 'creating, retrieving, updating and deleting cards respectively';
+        const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });
@@ -118,7 +119,7 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CARDS AND LIST ALL CARDS', () => {
   describe('list all cards', () => {
     it('lists all cards related to customer  ', (done) => {
       meta = generateMeta('cards/listAllCards');
-      meta.request.REQUEST_METHOD = 'POST';
+      meta.request.REQUEST_METHOD = 'GET';
       args = {
         customerID
       };

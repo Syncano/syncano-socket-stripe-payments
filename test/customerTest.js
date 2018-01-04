@@ -16,9 +16,10 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CUSTOMER AND LIST ALL CUSTOMERS', () 
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST`, `GET`, `PUT` and `DELETE` '
-        + 'request method for creating, retrieving, updating and' +
-        ' deleting customers respectively.');
+        const actions = 'creating, retrieving, updating and deleting customers respectively';
+        const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });
@@ -85,18 +86,16 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CUSTOMER AND LIST ALL CUSTOMERS', () 
   describe('list all customers', () => {
     it('lists all existing customers', (done) => {
       meta = generateMeta('customers/listAllCustomers');
-      meta.request.REQUEST_METHOD = 'POST';
+      meta.request.REQUEST_METHOD = 'GET';
       args = {
-        listCustomersParameter:
-        {
-          limit: 1
-        }
+        limit: 1
       };
       run('customers/listAllCustomers', {
         args,
         meta,
         config
       }).then((response) => {
+        console.log(response)
         expect(response.data.message).to.equal('List of Customers.');
         expect(response.data.statusCode).to.equal(200);
         expect(response.data.data)

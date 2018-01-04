@@ -1,27 +1,30 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
+  const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { customerID, sourceID } = ctx.args;
+  const actions = 'detaching source';
+  const expectedMethodTypes = ['DELETE'];
 
   try {
-    if (ctx.meta.request.REQUEST_METHOD === 'DELETE') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (ctx.meta.request.REQUEST_METHOD === expectedMethodTypes[0]) {
       const detachSource = await stripe.customers.deleteSource(customerID, sourceID);
       return response.json({
         message: 'Source Detached.',
         statusCode: 200,
-        data: detachSource,
+        data: detachSource
       });
     }
-    throw new Error('Make sure to use `DELETE` request method for detaching source.', 400);
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

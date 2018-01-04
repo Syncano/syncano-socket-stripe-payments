@@ -28,8 +28,10 @@ describe('CREATE, RETRIEVE, UPDATE, ATTACH AND DETACH SOURCES', () => {
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST`, `GET` and `PUT` '
-        + 'request method for creating, retrieving and updating sources respectively.');
+        const actions = 'creating, retrieving and updating sources respectively';
+        const expectedMethodTypes = ['POST', 'GET', 'PUT'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });

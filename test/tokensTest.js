@@ -10,7 +10,6 @@ let tokenID = '';
 
 
 describe('CREATE AND RETRIEVE TOKEN', () => {
-
   describe('creates token', () => {
     it('returns an error if a `DELETE` request method is passed to Url', (done) => {
       meta.request.REQUEST_METHOD = 'DELETE';
@@ -18,8 +17,10 @@ describe('CREATE AND RETRIEVE TOKEN', () => {
         meta,
         config
       }).then((response) => {
-        expect(response.data.message).to.equal('Make sure to use `POST` and `GET` '
-        + 'request method for creating and retrieving tokens respectively.');
+        const actions = 'creating and retrieving tokens respectively';
+        const expectedMethodTypes = ['POST', 'GET'].join(', ');
+        const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+        expect(response.data.message).to.equal(errorMessage);
         done();
       });
     });

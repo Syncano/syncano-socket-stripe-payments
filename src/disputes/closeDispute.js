@@ -2,9 +2,7 @@ import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
 
   try {
@@ -12,13 +10,13 @@ export default async (ctx) => {
     return response.json({
       message: 'Dispute closed.',
       statusCode: 200,
-      data: closeDispute,
+      data: closeDispute
     });
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

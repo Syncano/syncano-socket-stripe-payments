@@ -1,32 +1,34 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
   const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { customerID, bankAcctID, bankAcctParams } = ctx.args;
+  const actions = 'verifying bank accounts';
+  const expectedMethodTypes = ['POST'];
 
   try {
-    if (requestMethod === 'POST') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const verifyBankAcct = await stripe.customers.verifySource(
         customerID,
         bankAcctID,
-        bankAcctParams || {},
+        bankAcctParams || {}
       );
       return response.json({
         message: 'Bank Account Retrieved.',
         statusCode: 200,
-        data: verifyBankAcct,
+        data: verifyBankAcct
       });
     }
-    throw new Error('Make sure to use `POST` request method for verifying bank accounts', 400);
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

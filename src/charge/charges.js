@@ -1,45 +1,44 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
+  const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { chargeParameter, chargeID } = ctx.args;
+  const actions = 'creating, retrieving and updating charges respectively';
+  const expectedMethodTypes = ['POST', 'GET', 'PUT'];
 
   try {
-    if (ctx.meta.request.REQUEST_METHOD === 'POST') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const createStripeCharge = await stripe.charges.create(chargeParameter);
       return response.json({
         message: 'Charge created',
         statusCode: 200,
-        data: createStripeCharge,
+        data: createStripeCharge
       });
-    } else if (ctx.meta.request.REQUEST_METHOD === 'GET') {
+    } else if (requestMethod === expectedMethodTypes[1]) {
       const retrieveStripeCharge = await stripe.charges.retrieve(chargeID);
       return response.json({
         message: 'Charge Retrieved',
         statusCode: 200,
-        data: retrieveStripeCharge,
+        data: retrieveStripeCharge
       });
-    } else if (ctx.meta.request.REQUEST_METHOD === 'PUT') {
+    } else if (requestMethod === expectedMethodTypes[2]) {
       const updateStripeCharge = await stripe.charges.update(chargeID, chargeParameter || {});
       return response.json({
         message: 'Charge Updated',
         statusCode: 200,
-        data: updateStripeCharge,
+        data: updateStripeCharge
       });
     }
-    throw new Error(
-      'Make sure to use `POST`, `GET` and `PUT` request method for creating, ' +
-        'retrieving and updating charges respectively.',
-      400,
-    );
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

@@ -1,57 +1,55 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
   const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { customerID, bankAcctParams, bankAcctID } = ctx.args;
+  const actions = 'creating, retrieving, updating & deleting bank account respectively';
+  const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'];
 
   try {
-    if (requestMethod === 'POST') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const createBankAcct = await stripe.customers.createSource(customerID, bankAcctParams || {});
       return response.json({
         message: 'Bank account created',
         statusCode: 200,
-        data: createBankAcct,
+        data: createBankAcct
       });
-    } else if (requestMethod === 'GET') {
+    } else if (requestMethod === expectedMethodTypes[1]) {
       const retrieveBankAcct = await stripe.customers.retrieveSource(customerID, bankAcctID);
       return response.json({
         message: 'Bank Account Retrieved',
         statusCode: 200,
-        data: retrieveBankAcct,
+        data: retrieveBankAcct
       });
-    } else if (requestMethod === 'PUT') {
-      const updateBankAccount = await stripe.customers.updateCard(
+    } else if (requestMethod === expectedMethodTypes[2]) {
+      const updateBankAccount = await stripe.customers.updateSource(
         customerID,
         bankAcctID,
-        bankAcctParams || {},
+        bankAcctParams || {}
       );
       return response.json({
         message: 'Bank Account Updated',
         statusCode: 200,
-        data: updateBankAccount,
+        data: updateBankAccount
       });
-    } else if (requestMethod === 'DELETE') {
+    } else if (requestMethod === expectedMethodTypes[3]) {
       const deleteBankAccount = await stripe.customers.deleteSource(customerID, bankAcctID);
       return response.json({
         message: 'Bank Account Deleted',
         statusCode: 200,
-        data: deleteBankAccount,
+        data: deleteBankAccount
       });
     }
-    throw new Error(
-      'Make sure to use `POST`, `GET`, `PUT` & `DELETE` request method for creating, ' +
-        'retrieving, updating & deleting bank account respectively.',
-      400,
-    );
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };

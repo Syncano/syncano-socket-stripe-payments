@@ -1,5 +1,9 @@
 name: stripe-payments
 description: Stripe offers payment solutions for businesses.
+long_description: |
+  This socket covers Balance, Bank Account, Charges, Customers,
+  Disputes, Events, Sources and Tokens resources.
+  To make calls to specific endpoints, kindly refer to https://stripe.com/docs/api  
 version: 0.0.1
 
 config:
@@ -13,14 +17,72 @@ endpoints:
   balance/listAllBalance:
     description: Returns a list of transactions that have contributed to the Stripe account balance.
     parameters:
-      params:
+      available_on:
         type: object
-        description: Optional parameters for listing all balances. Check Stripe API reference documentation.
+        description: Optional parameters for filtering balance list.
+        long_description: |
+          Filters based on available_on. kindly refer to https://stripe.com/docs/api
         example: |
-          "params": {
-            { "currency": "usd",
-            "limit": 3 }
-          }
+            {
+              gte: 1515628800
+            }
+      created:
+        type: object
+        description: Optional parameters for filtering list based on balance created .
+        long_description: |
+          Filters based on balance created. kindly refer to https://stripe.com/docs/api
+        example: |
+            {
+              gt: 1515628800
+            }
+      currency:
+        type: string
+        description: Optional parameters for filtering balance list.
+        long_description: |
+          Filters based on currency type. kindly refer to https://stripe.com/docs/api
+        example: "usd"
+      ending_before:
+        type: string
+        description: Optional parameters for filtering balance list based on ending_before.
+        long_description: |
+          A cursor for use in pagination. It defines your place in te list.
+          For instance, if you make a list request and receive 100 objects, starting with obj_bar,
+          your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+          Filters based on ending_before. kindly refer to https://stripe.com/docs/api
+        example: "obj_bar"
+      limit:
+        type: integer
+        description: Optional parameters for limiting number of objects to return.
+        long_description: | 
+          This can range between 1 and 100 items, and the default is 10 items.
+          kindly refer to https://stripe.com/docs/api
+        example: 5
+      payout:
+        type: string
+        description: Optional parameters for automatic Stripe payouts only.
+        long_description: |
+          Only returns transactions that were payed out on the specified payout ID.
+          kindly refer to https://stripe.com/docs/api
+        example: "tr_10340J2eZvKYlo2Cg42HilbB"
+      source:
+        type: string
+        description: Optional parameters for returning the original transaction
+        long_description: |
+          Filters based on source. kindly refer to https://stripe.com/docs/api
+        example: "ch_19XJJ02eZvKYlo2CHfSUsSpl"
+      starting_after:
+        type: string
+        description: Optional parameters for filtering balance list based on starting_after.
+        long_description: |
+          cursor for use in pagination. starting_after is an object ID that defines your place in the list.
+          For instance, if you make a list request and receive 100 objects, ending with obj_foo,
+          your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+          kindly refer to https://stripe.com/docs/api
+        example: "obj_foo"
+      type:
+        type: string
+        description: Optional parameters that only returns transactions of the given type.
+        example: "charge"
           
      
     response:
@@ -127,6 +189,8 @@ endpoints:
       chargeID:
         type: string
         description: The identifier of the charge to be retrieved or updated.
+        long_description: |
+          Note that this is required for retrieve, update and shouldn't be passed for create.
         example: "ch_1BYXxnJbpxha41ttAGtgztsa"
      
     response:
@@ -191,11 +255,51 @@ endpoints:
   charge/listAllCharges:
     description: Returns a list of charges previously created.
     parameters:
-      listChargesParameter:
+      created:
         type: object
-        description: Optional parameters for listing charges. Check Stripe API reference documentation.
+        description: Optional parameters for filtering charge list.
+        long_description: Filters based on available_on kindly refer to https://stripe.com/docs/api
         example: |
-          { limit: 3 }
+            {
+              gt: 1515628800
+            }
+      customerID:
+        type: string
+        description: returns charges specific to this customer ID..
+        example: "cus_BvilkNcCyAsOod"
+      ending_before:
+        type: string
+        description: Optional parameters for filtering balance list based on ending_before.
+        long_description: |
+          A cursor for use in pagination. It defines your place in te list.
+          For instance, if you make a list request and receive 100 objects, starting with obj_bar,
+          your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+          Filters based on ending_before. kindly refer to https://stripe.com/docs/api
+        example: "obj_bar"
+      limit:
+        type: integer
+        description: Optional parameters for limiting number of objects to return.
+        long_description: | 
+          This can range between 1 and 100 items, and the default is 10 items.
+          kindly refer to https://stripe.com/docs/api
+        example: 3
+      source:
+        type: object
+        description: Optional parameters for filtering charge.
+        long_description: filters list based on the source of the charge kindly refer to https://stripe.com/docs/api
+        example: |
+            {
+              object: "card"
+            }
+      starting_after:
+        type: string
+        description: Optional parameters for filtering balance list based on starting_after.
+        long_description: |
+          cursor for use in pagination. starting_after is an object ID that defines your place in the list.
+          For instance, if you make a list request and receive 100 objects, ending with obj_foo,
+          your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+          kindly refer to https://stripe.com/docs/api
+        example: "obj_foo"
      
     response:
       mimetype: application/json
@@ -220,7 +324,7 @@ endpoints:
             }
   
   customers/customer:
-    description: Create, Retrieve, Update and Delete  actions for customer.
+    description: Create, Retrieve, Update and Delete actions for customer.
     long_description: |
       This comprises of four actions for `customers` resource.
       Make sure to use `POST`, `GET`, `PUT` and `DELETE` request method for creating,
@@ -265,11 +369,43 @@ endpoints:
   customers/listAllCustomers:
     description: Returns a list of your customers.
     parameters:
-      listCustomersParameter:
+      created:
         type: object
-        description: Optional parameters for listing customers. Check Stripe API reference documentation.
+        description: Optional parameters for filtering customer's list.
+        long_description: Filters based on available_on. kindly refer to https://stripe.com/docs/api
         example: |
-          { limit: 1 }
+            {
+              lte: 1515628800
+            }
+      email:
+        type: string
+        description: Filters list based on customer's email. kindly refer to https://stripe.com/docs/api
+        example: "example@example.com"
+      ending_before:
+        type: string
+        description: Optional parameters for filtering balance list based on ending_before.
+        long_description: |
+          A cursor for use in pagination. It defines your place in te list.
+          For instance, if you make a list request and receive 100 objects, starting with obj_bar,
+          your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+          Filters based on ending_before. kindly refer to https://stripe.com/docs/api
+        example: "obj_bar"
+      limit:
+        type: integer
+        description: Optional parameters for limiting number of objects to return.
+        long_description: | 
+          This can range between 1 and 100 items, and the default is 10 items.
+          kindly refer to https://stripe.com/docs/api
+        example: 3
+      starting_after:
+        type: string
+        description: Optional parameters for filtering balance list based on starting_after.
+        long_description: |
+          cursor for use in pagination. starting_after is an object ID that defines your place in the list.
+          For instance, if you make a list request and receive 100 objects, ending with obj_foo,
+          your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+          kindly refer to https://stripe.com/docs/api
+        example: "obj_foo"
      
     response:
       mimetype: application/json
@@ -374,7 +510,7 @@ endpoints:
     parameters:
       disputesParams:
         type: object
-        description: Optional parameters for listing disputes. Check Stripe API reference documentation.
+        description: Optional parameters for listing disputes. kindly refer to https://stripe.com/docs/api
         example: |
           { limit: 3 }
      
@@ -405,7 +541,7 @@ endpoints:
     parameters:
       eventsParams:
         type: object
-        description: Optional parameters for listing events. Check Stripe API reference documentation.
+        description: Optional parameters for listing events. kindly refer to https://stripe.com/docs/api
         example: |
           { limit: 3 }
      
@@ -510,7 +646,7 @@ endpoints:
             }
 
   bankAccounts/bankAccount:
-    description: Create, Retrieve, Update and Delete  actions for bank account.
+    description: Create, Retrieve, Update and Delete actions for bank account.
     long_description: |
       This comprises of four actions for `bank accounts` resource.
       Make sure to use `POST`, `GET`, `PUT` & `DELETE` request method for creating,
@@ -556,17 +692,33 @@ endpoints:
             }
 
   bankAccounts/listAllBankAccts:
-    description: Returns  a list of the bank accounts belonging to a Customer.
+    description: Returns a list of the bank accounts belonging to a Customer.
     parameters:
-      bankAcctParams:
-        type: object
-        description: Optional parameters for listing all bank accounts. Check Stripe API reference documentation.
-        example: |
-          {
-            "bankAcctParams": {
-              "limit": 3
-            }
-          }
+      ending_before:
+        type: string
+        description: Optional parameters for filtering balance list based on ending_before.
+        long_description: |
+          A cursor for use in pagination. It defines your place in te list.
+          For instance, if you make a list request and receive 100 objects, starting with obj_bar,
+          your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+          Filters based on ending_before. kindly refer to https://stripe.com/docs/api
+        example: "obj_bar"
+      limit:
+        type: integer
+        description: Optional parameters for limiting number of objects to return.
+        long_description: | 
+          This can range between 1 and 100 items, and the default is 10 items.
+          kindly refer to https://stripe.com/docs/api
+        example: 3
+      starting_after:
+        type: string
+        description: Optional parameters for filtering balance list based on starting_after.
+        long_description: |
+          cursor for use in pagination. starting_after is an object ID that defines your place in the list.
+          For instance, if you make a list request and receive 100 objects, ending with obj_foo,
+          your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+          kindly refer to https://stripe.com/docs/api
+        example: "obj_foo"
       customerID:
         type: string
         description: The ID of the customer whose bank accounts will be retrieved.
@@ -599,7 +751,7 @@ endpoints:
     parameters:
       bankAcctParams:
         type: object
-        description: Optional parameters for verifying bank accounts. Check Stripe API reference documentation.
+        description: Optional parameters for verifying bank accounts. kindly refer to https://stripe.com/docs/api
         example: |
           {
             "bankAcctParams": {
@@ -638,7 +790,7 @@ endpoints:
             }
 
   cards/card:
-    description: Create, Retrieve, Update and Delete  actions for cards.
+    description: Create, Retrieve, Update and Delete actions for cards.
     long_description: |
       This comprises of four actions for `customers` resource.
       Make sure to use `POST`, `GET`, `PUT` and `DELETE` request method for creating,
@@ -688,15 +840,31 @@ endpoints:
   cards/listAllCards:
     description: Creates a single use token that wraps the details of a credit card.
     parameters:
-      cardParams:
-        type: object
-        description: Optional parameters for creating card token. Check Stripe API reference documentation.
-        example: |
-          {
-            "cardParams": {
-              "source": "tok_1BZmhWJbpxha41ttGBMAJQIM"
-            }
-          }
+      ending_before:
+        type: string
+        description: Optional parameters for filtering balance list.
+        long_description: |
+          A cursor for use in pagination. It defines your place in te list.
+          For instance, if you make a list request and receive 100 objects, starting with obj_bar,
+          your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+          Filters based on ending_before. kindly refer to https://stripe.com/docs/api
+        example: "obj_bar"
+      limit:
+        type: integer
+        description: Optional parameters for limiting number of objects to return.
+        long_description: | 
+          This can range between 1 and 100 items, and the default is 10 items.
+          kindly refer to https://stripe.com/docs/api
+        example: 3
+      starting_after:
+        type: string
+        description: Optional parameters for filtering balance list based on starting_after.
+        long_description: |
+          cursor for use in pagination. starting_after is an object ID that defines your place in the list.
+          For instance, if you make a list request and receive 100 objects, ending with obj_foo,
+          your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+          kindly refer to https://stripe.com/docs/api
+        example: "obj_foo"
       customerID:
         type: string
         description: The ID of the customer whose cards will be listed.
@@ -729,7 +897,7 @@ endpoints:
     parameters:
       customerID:
         type: string
-        description: Compulsory parameter for customer's identification. Check Stripe API reference documentation.
+        description: Compulsory parameter for customer's identification. kindly refer to https://stripe.com/docs/api
         example: "cus_BwTBe5lcoH6QBA"
       sourceParameter:
         type: object
@@ -763,7 +931,7 @@ endpoints:
     parameters:
       customerID:
         type: string
-        description: Compulsory parameter for customer's identification. Check Stripe API reference documentation.
+        description: Compulsory parameter for customer's identification. kindly refer to https://stripe.com/docs/api
         example: "cus_BwTBe5lcoH6QBA"
       sourceID:
         type: string

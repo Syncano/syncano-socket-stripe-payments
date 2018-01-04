@@ -1,28 +1,30 @@
 import Syncano from 'syncano-server';
 import stripePackage from 'stripe';
+import checkRequestType from '../utility/checkRequestType';
 
 export default async (ctx) => {
-  const { response, logger } = Syncano(ctx);
-  const log = logger('Socket scope');
+  const { response } = Syncano(ctx);
   const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
   const requestMethod = ctx.meta.request.REQUEST_METHOD;
   const { customerID, sourceParameter } = ctx.args;
+  const actions = 'attaching Source';
+  const expectedMethodTypes = ['POST'];
 
   try {
-    if (requestMethod === 'POST') {
+    checkRequestType(requestMethod, expectedMethodTypes, actions);
+    if (requestMethod === expectedMethodTypes[0]) {
       const attachSource = await stripe.customers.createSource(customerID, sourceParameter);
       return response.json({
         message: 'Source Attached.',
         statusCode: 200,
-        data: attachSource,
+        data: attachSource
       });
     }
-    throw new Error('Make sure to use `POST` request method for retrieving balance.', 400);
-  } catch (err) {
+  } catch ({ type, message, statusCode }) {
     response.json({
-      type: err.type,
-      message: err.message,
-      statusCode: err.statusCode,
+      type,
+      message,
+      statusCode
     });
   }
 };
