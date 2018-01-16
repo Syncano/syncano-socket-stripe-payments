@@ -12,21 +12,21 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const createStripeCharge = await stripe.charges.create(chargeParameter);
       return response.json({
         message: 'Charge created',
         statusCode: 200,
         data: createStripeCharge
       });
-    } else if (requestMethod === expectedMethodTypes[1]) {
+    } else if (requestMethod === 'GET') {
       const retrieveStripeCharge = await stripe.charges.retrieve(chargeID);
       return response.json({
         message: 'Charge Retrieved',
         statusCode: 200,
         data: retrieveStripeCharge
       });
-    } else if (requestMethod === expectedMethodTypes[2]) {
+    } else if (requestMethod === 'PUT') {
       const updateStripeCharge = await stripe.charges.update(chargeID, chargeParameter || {});
       return response.json({
         message: 'Charge Updated',

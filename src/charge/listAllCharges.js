@@ -11,7 +11,7 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'GET') {
       const listStripeCharges = await stripe.charges.list(ctx.args || {});
       return response.json({
         message: 'List of Charges',

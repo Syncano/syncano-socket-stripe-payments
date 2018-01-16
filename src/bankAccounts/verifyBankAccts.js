@@ -12,7 +12,7 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const verifyBankAcct = await stripe.customers.verifySource(
         customerID,
         bankAcctID,

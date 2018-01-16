@@ -12,28 +12,28 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const createStripeCustomer = await stripe.customers.create(customerParameter || {});
       return response.json({
         message: 'Customer created successfully.',
         statusCode: 200,
         data: createStripeCustomer,
       });
-    } else if (requestMethod === expectedMethodTypes[1]) {
+    } else if (requestMethod === 'GET') {
       const retrieveStripeCustomer = await stripe.customers.retrieve(customerID);
       return response.json({
         message: 'Customer retrieved successfully.',
         statusCode: 200,
         data: retrieveStripeCustomer,
       });
-    } else if (requestMethod === expectedMethodTypes[2]) {
+    } else if (requestMethod === 'PUT') {
       const updateStripeCustomer = await stripe.customers.update(customerID, customerParameter);
       return response.json({
         message: 'Customer updated successfully',
         statusCode: 200,
         data: updateStripeCustomer,
       });
-    } else if (requestMethod === expectedMethodTypes[3]) {
+    } else if (requestMethod === 'DELETE') {
       const deleteStripeCustomer = await stripe.customers.del(customerID);
       return response.json({
         message: 'Customer deleted successfully.',

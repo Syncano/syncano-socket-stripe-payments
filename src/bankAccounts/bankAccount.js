@@ -12,21 +12,21 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const createBankAcct = await stripe.customers.createSource(customerID, bankAcctParams || {});
       return response.json({
         message: 'Bank account created',
         statusCode: 200,
         data: createBankAcct
       });
-    } else if (requestMethod === expectedMethodTypes[1]) {
+    } else if (requestMethod === 'GET') {
       const retrieveBankAcct = await stripe.customers.retrieveSource(customerID, bankAcctID);
       return response.json({
         message: 'Bank Account Retrieved',
         statusCode: 200,
         data: retrieveBankAcct
       });
-    } else if (requestMethod === expectedMethodTypes[2]) {
+    } else if (requestMethod === 'PUT') {
       const updateBankAccount = await stripe.customers.updateSource(
         customerID,
         bankAcctID,
@@ -37,7 +37,7 @@ export default async (ctx) => {
         statusCode: 200,
         data: updateBankAccount
       });
-    } else if (requestMethod === expectedMethodTypes[3]) {
+    } else if (requestMethod === 'DELETE') {
       const deleteBankAccount = await stripe.customers.deleteSource(customerID, bankAcctID);
       return response.json({
         message: 'Bank Account Deleted',

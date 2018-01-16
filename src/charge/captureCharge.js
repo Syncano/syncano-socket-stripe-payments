@@ -12,7 +12,7 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const captureStripeCharge = await stripe.charges.capture(
         chargeID,
         captureChargeParameter || {}

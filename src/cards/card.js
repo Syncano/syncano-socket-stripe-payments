@@ -12,28 +12,28 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'POST') {
       const createCard = await stripe.customers.createSource(customerID, cardParams);
       return response.json({
         message: 'Card created.',
         statusCode: 200,
         data: createCard
       });
-    } else if (requestMethod === expectedMethodTypes[1]) {
+    } else if (requestMethod === 'GET') {
       const retrieveCard = await stripe.customers.retrieveCard(customerID, cardID);
       return response.json({
         message: 'Card Retrieved',
         statusCode: 200,
         data: retrieveCard
       });
-    } else if (requestMethod === expectedMethodTypes[2]) {
+    } else if (requestMethod === 'PUT') {
       const updateCard = await stripe.customers.updateCard(customerID, cardID, cardParams);
       return response.json({
         message: 'Card Updated',
         statusCode: 200,
         data: updateCard
       });
-    } else if (requestMethod === expectedMethodTypes[3]) {
+    } else if (requestMethod === 'DELETE') {
       const deleteCard = await stripe.customers.deleteCard(customerID, cardID);
       return response.json({
         message: 'Card Deleted',

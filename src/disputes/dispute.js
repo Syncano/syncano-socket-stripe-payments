@@ -12,14 +12,14 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'GET') {
       const retrieveDispute = await stripe.disputes.retrieve(disputeID);
       return response.json({
         message: 'Dispute retrieved successfully',
         statusCode: 200,
         data: retrieveDispute
       });
-    } else if (requestMethod === expectedMethodTypes[1]) {
+    } else if (requestMethod === 'PUT') {
       const updateDispute = await stripe.disputes.update(disputesID, disputeParameter);
       return response.json({
         message: 'Dispute updated successfully',

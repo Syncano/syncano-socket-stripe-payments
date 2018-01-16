@@ -12,7 +12,7 @@ export default async (ctx) => {
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+    if (requestMethod === 'GET') {
       const listBankAccts = await stripe.customers.listSources(customerID, bankAcctParams || {});
       return response.json({
         message: 'List of Bank Accounts.',
