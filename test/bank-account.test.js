@@ -1,10 +1,10 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
 };
-let meta = generateMeta('bankAccounts/bankAccount');
+let meta = generateMeta('bank-accounts/bank-account');
 let args = {};
 let customerID,
   source,
@@ -25,7 +25,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
   describe('creates bank Account', () => {
     it('returns an error if a `PATCH` request method is passed to Url', (done) => {
       meta.request.REQUEST_METHOD = 'PATCH';
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         meta,
         config
       }).then((response) => {
@@ -39,7 +39,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
 
     it('throws an error when no argument parameter is passed ', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         meta,
         config
       }).then((response) => {
@@ -56,7 +56,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
           source: 'tok_1BZLlzJbpxha41ttSWMzMbjE'
         }
       };
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         args,
         meta,
         config
@@ -73,7 +73,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
       args = {
         customerID: 'cus_BwTBe5lcoH6QBA'
       };
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         args,
         meta,
         config
@@ -108,7 +108,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
           customerID,
           bankAcctParams: { source }
         };
-        run('bankAccounts/bankAccount', {
+        run('bank-accounts/bank-account', {
           args,
           meta,
           config
@@ -130,7 +130,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
         customerID,
         bankAcctID
       };
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         args,
         meta,
         config
@@ -155,7 +155,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
           }
         }
       };
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         args,
         meta,
         config
@@ -170,13 +170,13 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
 
   describe('list all bank accounts', () => {
     it('lists all account  ', (done) => {
-      meta = generateMeta('bankAccounts/listAllBankAccts');
+      meta = generateMeta('bank-accounts/list-all-bank-accounts');
       meta.request.REQUEST_METHOD = 'GET';
       args = {
         customerID,
         limit: 3
       };
-      run('bankAccounts/listAllBankAccts', {
+      run('bank-accounts/list-all-bank-accounts', {
         args,
         meta,
         config
@@ -192,10 +192,10 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
   });
 
   describe(
-    'throws error message, as we are verifying cards ' + "and can't use banks in test mode",
+    'throws error message, as we are verifying cards and can\'t use banks in test mode',
     () => {
       it('throws error message when verifying card ', (done) => {
-        meta = generateMeta('bankAccounts/verifyBankAccts');
+        meta = generateMeta('bank-accounts/verify-bank-accounts');
         meta.request.REQUEST_METHOD = 'POST';
         args = {
           customerID,
@@ -204,13 +204,13 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
             amounts: [32, 45]
           }
         };
-        run('bankAccounts/verifyBankAccts', {
+        run('bank-accounts/verify-bank-accounts', {
           args,
           meta,
           config
         }).then((response) => {
           expect(response.data.type).to.equal('StripeInvalidRequestError');
-          expect(response.data.message).to.equal(`The payment source ${bankAcctID} ` + 'does not require validation.');
+          expect(response.data.message).to.equal(`The payment source ${bankAcctID} does not require validation.`);
           expect(response.data.statusCode).to.equal(400);
           done();
         });
@@ -225,7 +225,7 @@ describe('CREATE, RETRIEVE, UPDATE, LIST, VERIFY AND DELETE Bank Account', () =>
         customerID,
         bankAcctID
       };
-      run('bankAccounts/bankAccount', {
+      run('bank-accounts/bank-account', {
         args,
         meta,
         config

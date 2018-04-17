@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
@@ -56,7 +56,7 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CARDS AND LIST ALL CARDS', () => {
         source = response.data.data.id;
         args = {
           customerID,
-          cardParams: {source}
+          cardParams: { source }
         };
         run('cards/card', {
           args,
@@ -118,12 +118,12 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CARDS AND LIST ALL CARDS', () => {
 
   describe('list all cards', () => {
     it('lists all cards related to customer  ', (done) => {
-      meta = generateMeta('cards/listAllCards');
+      meta = generateMeta('cards/list-all-cards');
       meta.request.REQUEST_METHOD = 'GET';
       args = {
         customerID
       };
-      run('cards/listAllCards', {
+      run('cards/list-all-cards', {
         args,
         meta,
         config
