@@ -14,6 +14,7 @@ config:
 
 endpoints:
   balance/list-all-balance:
+    private: true
     description: Returns a list of transactions that have contributed to the Stripe account balance.
     inputs:
       properties:
@@ -115,6 +116,7 @@ endpoints:
             }
 
   balance/retrieve-balance:
+    private: true
     description: Retrieves current account balance, based on authentication used to make the request.
     outputs:
       success:
@@ -137,6 +139,7 @@ endpoints:
             }
 
   balance/retrieve-balance-transaction:
+    private: true
     description: Retrieves the balance transaction with the given ID.
     inputs:
       properties:
@@ -171,6 +174,7 @@ endpoints:
             }
 
   charge/charges:
+    private: true
     description: Create, Retrieve and Update actions for charges.
     long_description: |
       This comprises of three actions for `charges` resource.
@@ -225,6 +229,7 @@ endpoints:
             }
 
   charge/capture-charge:
+    private: true
     description: Capture the payment of an existing, uncaptured, charge.
     inputs:
       properties:
@@ -264,6 +269,7 @@ endpoints:
             }
 
   charge/list-all-charges:
+    private: true
     description: Returns a list of charges previously created.
     inputs:
       properties:
@@ -341,6 +347,7 @@ endpoints:
             }
   
   customers/customer:
+    private: true
     description: Create, Retrieve, Update and Delete actions for customer.
     long_description: |
       This comprises of four actions for `customers` resource.
@@ -388,6 +395,7 @@ endpoints:
             }
 
   customers/list-all-customers:
+    private: true
     description: Returns a list of your customers.
     inputs:
       properties:
@@ -456,6 +464,7 @@ endpoints:
             }
 
   disputes/close-dispute:
+    private: true
     description: Closes dispute for a charge.
     inputs:
       properties:
@@ -496,6 +505,7 @@ endpoints:
             }
   
   disputes/dispute:
+    private: true
     description: Retrieve and Update actions for dispute.
     long_description: |
       This comprises of two actions for `disputes` resource.
@@ -544,6 +554,7 @@ endpoints:
             }
 
   disputes/list-all-disputes:
+    private: true
     description: Returns a list of all disputes.
     inputs:
       properties:
@@ -583,6 +594,7 @@ endpoints:
             }
 
   events/list-all-events:
+    private: true
     description: Returns a list of all events.
     inputs:
       properties:
@@ -617,6 +629,7 @@ endpoints:
             }
 
   events/retrieve-event:
+    private: true
     description: Closes dispute for a charge.
     inputs:
       properties:
@@ -648,6 +661,7 @@ endpoints:
             }
 
   tokens/token:
+    private: true
     description: Creates a single use token that wraps the details of a credit card.
     inputs:
       properties:
@@ -698,6 +712,7 @@ endpoints:
             }
 
   bank-accounts/bank-account:
+    private: true
     description: Create, Retrieve, Update and Delete actions for bank account.
     long_description: |
       This comprises of four actions for `bank accounts` resource.
@@ -749,6 +764,7 @@ endpoints:
             }
 
   bank-accounts/list-all-bank-accounts:
+    private: true
     description: Returns a list of the bank accounts belonging to a Customer.
     inputs:
       properties:
@@ -808,6 +824,7 @@ endpoints:
             }
 
   bank-accounts/verify-bank-accounts:
+    private: true
     description: Verifies the customer's bank account. This only works with real bank account information.
     inputs:
       properties:
@@ -854,6 +871,7 @@ endpoints:
             }
 
   cards/card:
+    private: true
     description: Create, Retrieve, Update and Delete actions for cards.
     long_description: |
       This comprises of four actions for `customers` resource.
@@ -907,6 +925,7 @@ endpoints:
             }
 
   cards/list-all-cards:
+    private: true
     description: Creates a single use token that wraps the details of a credit card.
     inputs:
       properties:
@@ -966,6 +985,7 @@ endpoints:
             }
 
   sources/attach-source:
+    private: true
     description: Attaches a Source object to a Customer.
     inputs:
       properties:
@@ -1005,6 +1025,7 @@ endpoints:
             }
 
   sources/detach-source:
+    private: true
     description: Detaches a Source object from a Customer.
     inputs:
       properties:
@@ -1041,6 +1062,7 @@ endpoints:
             }
   
   sources/source:
+    private: true
     description: Create, Retrieve and Update actions for sources.
     long_description: |
       This comprises of three actions for `charges` resource.
