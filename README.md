@@ -45,5 +45,5 @@ To view socket endpoints and corresponding parameters, kindly, visit [here](http
   * Copy contents of `.envrc.default` file to newly created `.envrc` file and assign appropriate values to the listed variables.
 
 #### Testing
-  * Ensure all your test are written in the `test` directory
-  * Use the command `npm test` to run test
+  * Ensure all your tests are written in the `test` directory
+  * Use the command `npm test` to run tests

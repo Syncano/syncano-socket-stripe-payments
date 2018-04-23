@@ -4,10 +4,12 @@ import checkRequestType from '../util/check-request-type';
 
 export default async (ctx) => {
   const { response } = new Syncano(ctx);
-  const { config, meta, args } = ctx;
+  const { config, meta, args: {
+    customerID, cardParams, cardID
+  }
+  } = ctx;
   const stripe = stripePackage(config.STRIPE_SECRET_KEY);
   const requestMethod = meta.request.REQUEST_METHOD;
-  const { customerID, cardParams, cardID } = args;
   const actions = 'creating, retrieving, updating and deleting cards respectively';
   const expectedMethodTypes = ['POST', 'GET', 'PUT', 'DELETE'];
 
