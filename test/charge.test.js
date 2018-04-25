@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
@@ -92,14 +92,14 @@ describe('CREATE, RETRIEVE, UPDATE, CAPTURE CHARGE AND LIST ALL CHARGE', () => {
 
   describe('list all charge', () => {
     it('lists all cards related to customer  ', (done) => {
-      meta = generateMeta('charge/listAllCharges');
+      meta = generateMeta('charge/list-all-charges');
       meta.request.REQUEST_METHOD = 'GET';
       args = {
         source: {
           object: 'card'
         }
       };
-      run('charge/listAllCharges', {
+      run('charge/list-all-charges', {
         args,
         meta,
         config
@@ -116,12 +116,12 @@ describe('CREATE, RETRIEVE, UPDATE, CAPTURE CHARGE AND LIST ALL CHARGE', () => {
 
   describe('capture charge', () => {
     it('captures charge related to customer', (done) => {
-      meta = generateMeta('charge/captureCharge');
+      meta = generateMeta('charge/capture-charge');
       meta.request.REQUEST_METHOD = 'POST';
       args = {
         chargeID
       };
-      run('charge/captureCharge', {
+      run('charge/capture-charge', {
         args,
         meta,
         config

@@ -1,10 +1,10 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
 };
-let meta = generateMeta('balance/listAllBalance');
+let meta = generateMeta('balance/list-all-balance');
 let args = {};
 let actions = '';
 let expectedMethodTypes = [];
@@ -13,7 +13,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
   describe('List All Balance', () => {
     it('returns an error if a `POST` request method is passed to Url', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
-      run('balance/listAllBalance', {
+      run('balance/list-all-balance', {
         meta,
         config
       }).then((response) => {
@@ -27,7 +27,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
 
     it('list all balance if no argument parameter and `GET` request method is passed', (done) => {
       meta.request.REQUEST_METHOD = 'GET';
-      run('balance/listAllBalance', {
+      run('balance/list-all-balance', {
         meta,
         config
       }).then((response) => {
@@ -46,7 +46,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
         limit: 3
       };
       meta.request.REQUEST_METHOD = 'GET';
-      run('balance/listAllBalance', {
+      run('balance/list-all-balance', {
         args,
         meta,
         config
@@ -62,10 +62,10 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
   });
 
   describe('Retrieve Balance', () => {
-    meta = generateMeta('balance/retrieveBalance');
+    meta = generateMeta('balance/retrieve-balance');
     it('returns an error if a `POST` request method is passed to Url', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
-      run('balance/retrieveBalance', {
+      run('balance/retrieve-balance', {
         meta,
         config
       }).then((response) => {
@@ -79,7 +79,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
 
     it('list all balance if no argument parameter and `POST` request method is passed', (done) => {
       meta.request.REQUEST_METHOD = 'GET';
-      run('balance/retrieveBalance', {
+      run('balance/retrieve-balance', {
         meta,
         config
       }).then((response) => {
@@ -94,10 +94,10 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
   });
 
   describe('Retrieve Balance Transaction', () => {
-    meta = generateMeta('balance/retrieveBalanceTransaction');
+    meta = generateMeta('balance/retrieve-balance-transaction');
     it('returns an error if a `POST` request method is passed to Url', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
-      run('balance/retrieveBalanceTransaction', {
+      run('balance/retrieve-balance-transaction', {
         meta,
         config
       }).then((response) => {
@@ -111,7 +111,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
 
     it('returns an error message if ID is no passed', (done) => {
       meta.request.REQUEST_METHOD = 'GET';
-      run('balance/retrieveBalanceTransaction', {
+      run('balance/retrieve-balance-transaction', {
         meta,
         config
       }).then((response) => {
@@ -125,7 +125,7 @@ describe('LIST ALL BALANCE, RETRIEVE BALANCE, AND RETRIEVE BALANCE TRANSACTIONS'
         transID: 'txn_1BYXxzJbpxha41ttgmoeelpy'
       };
       meta.request.REQUEST_METHOD = 'GET';
-      run('balance/retrieveBalanceTransaction', {
+      run('balance/retrieve-balance-transaction', {
         args,
         meta,
         config

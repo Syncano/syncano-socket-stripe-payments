@@ -1,1 +1,2 @@
 export STRIPE_SECRET_KEY=
+export SYNCANO_AUTH_KEY=

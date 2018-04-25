@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY

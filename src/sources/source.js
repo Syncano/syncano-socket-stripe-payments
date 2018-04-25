@@ -1,47 +1,36 @@
-import Syncano from 'syncano-server';
+import Syncano from '@syncano/core';
 import stripePackage from 'stripe';
-import checkRequestType from '../utility/checkRequestType';
+import checkRequestType from '../util/check-request-type';
 
 export default async (ctx) => {
-  const { response } = Syncano(ctx);
-  const stripe = stripePackage(ctx.config.STRIPE_SECRET_KEY);
-  const requestMethod = ctx.meta.request.REQUEST_METHOD;
-  const { sourceParameter, sourceID, clientSecret } = ctx.args;
+  const { response } = new Syncano(ctx);
+  const { config, meta, args } = ctx;
+  const stripe = stripePackage(config.STRIPE_SECRET_KEY);
+  const requestMethod = meta.request.REQUEST_METHOD;
+  const { sourceParameter = {}, sourceID, clientSecret } = args;
   const actions = 'creating, retrieving and updating sources respectively';
   const expectedMethodTypes = ['POST', 'GET', 'PUT'];
 
   try {
     checkRequestType(requestMethod, expectedMethodTypes, actions);
-    if (requestMethod === expectedMethodTypes[0]) {
+
+    if (requestMethod === 'POST') {
       const createSource = await stripe.sources.create(sourceParameter);
-      return response.json({
-        message: 'Source created',
-        statusCode: 200,
-        data: createSource
-      });
-    } else if (requestMethod === expectedMethodTypes[1]) {
-      const retrieveSource = await stripe.sources.retrieve(
-        sourceID,
-        { client_secret: clientSecret } || {}
-      );
-      return response.json({
-        message: 'Source Retrieved',
-        statusCode: 200,
-        data: retrieveSource
-      });
-    } else if (requestMethod === expectedMethodTypes[2]) {
-      const updateSource = await stripe.sources.update(sourceID, sourceParameter || {});
-      return response.json({
-        message: 'Source Updated',
-        statusCode: 200,
-        data: updateSource
-      });
+      return response.json({ message: 'Source created', statusCode: 200, data: createSource });
     }
-  } catch ({ type, message, statusCode }) {
-    response.json({
-      type,
-      message,
-      statusCode
-    });
+    else if (requestMethod === 'GET') {
+      const params = { };
+      if (clientSecret) {
+        params.client_secret = clientSecret;
+      }
+      const retrieveSource = await stripe.sources.retrieve(sourceID, params);
+      return response.json({ message: 'Source Retrieved', statusCode: 200, data: retrieveSource });
+    }
+    else if (requestMethod === 'PUT') {
+      const updateSource = await stripe.sources.update(sourceID, sourceParameter || {});
+      return response.json({ message: 'Source Updated', statusCode: 200, data: updateSource });
+    }
+  } catch ({ type, message, statusCode = 400 }) {
+    return response.json({ type, message, statusCode }, statusCode);
   }
 };

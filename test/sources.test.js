@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
@@ -87,7 +87,7 @@ describe('CREATE, RETRIEVE, UPDATE, ATTACH AND DETACH SOURCES', () => {
       meta.request.REQUEST_METHOD = 'PUT';
       args = {
         sourceID,
-        sourceParameter: {metadata: {order_id: 6789}}
+        sourceParameter: { metadata: { order_id: 6789 } }
       };
       run('sources/source', {
         args,
@@ -104,13 +104,13 @@ describe('CREATE, RETRIEVE, UPDATE, ATTACH AND DETACH SOURCES', () => {
 
   describe('attach source', () => {
     it('attach source to a customer  ', (done) => {
-      meta = generateMeta('sources/attachSource');
+      meta = generateMeta('sources/attach-source');
       meta.request.REQUEST_METHOD = 'POST';
       args = {
         customerID,
-        sourceParameter: {source: sourceID}
+        sourceParameter: { source: sourceID }
       };
-      run('sources/attachSource', {
+      run('sources/attach-source', {
         args,
         meta,
         config
@@ -125,13 +125,13 @@ describe('CREATE, RETRIEVE, UPDATE, ATTACH AND DETACH SOURCES', () => {
 
   describe('detach source', () => {
     it('detach source from a customer ', (done) => {
-      meta = generateMeta('sources/detachSource');
+      meta = generateMeta('sources/detach-source');
       meta.request.REQUEST_METHOD = 'DELETE';
       args = {
         customerID,
         sourceID
       };
-      run('sources/detachSource', {
+      run('sources/detach-source', {
         args,
         meta,
         config

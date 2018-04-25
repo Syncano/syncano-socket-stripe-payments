@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { run, generateMeta } from '@syncano/test';
 
 const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
@@ -85,17 +85,16 @@ describe('CREATE, RETRIEVE, UPDATE, DELETE CUSTOMER AND LIST ALL CUSTOMERS', () 
 
   describe('list all customers', () => {
     it('lists all existing customers', (done) => {
-      meta = generateMeta('customers/listAllCustomers');
+      meta = generateMeta('customers/list-all-customers');
       meta.request.REQUEST_METHOD = 'GET';
       args = {
         limit: 1
       };
-      run('customers/listAllCustomers', {
+      run('customers/list-all-customers', {
         args,
         meta,
         config
       }).then((response) => {
-        console.log(response)
         expect(response.data.message).to.equal('List of Customers.');
         expect(response.data.statusCode).to.equal(200);
         expect(response.data.data)
